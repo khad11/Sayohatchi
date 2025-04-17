@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,30 @@ export default function AIRoutePage() {
         : [...prev, interest]
     );
   };
+  useEffect(() => {
+    const saved = localStorage.getItem("aiForm");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setLocation(parsed.location || "");
+      setDateRange(parsed.dateRange || undefined);
+      setBudgetMin(parsed.budgetMin || "");
+      setBudgetMax(parsed.budgetMax || "");
+      setInterests(parsed.interests || []);
+      setAccessibility(parsed.accessibility || "");
+    }
+  }, []);
+
+  useEffect(() => {
+    const data = {
+      location,
+      dateRange,
+      budgetMin,
+      budgetMax,
+      interests,
+      accessibility,
+    };
+    localStorage.setItem("aiForm", JSON.stringify(data));
+  }, [location, dateRange, budgetMin, budgetMax, interests, accessibility]);
 
   const generateRoute = async () => {
     setLoading(true);
@@ -177,12 +201,28 @@ export default function AIRoutePage() {
         </Button>
 
         {route && (
-          <div className="mt-6">
-            <Label>AI Tavsiya qilgan marshrut</Label>
-            <Textarea readOnly value={route} className="min-h-[200px]" />
+          <div className="mt-6 space-y-2">
+            <Label className="text-lg font-semibold">
+              AI tavsiya qilgan marshrut
+            </Label>
+            <div className="bg-muted p-4 rounded-2xl shadow border relative">
+              <pre className="whitespace-pre-wrap break-words text-sm max-h-[300px] overflow-y-auto">
+                {route}
+              </pre>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute top-2 right-2 text-xs"
+                onClick={() => {
+                  navigator.clipboard.writeText(route);
+                }}
+              ></Button>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
 }
+
+// sfdjghsl

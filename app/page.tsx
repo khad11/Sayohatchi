@@ -20,9 +20,7 @@ import AccessibilityFeatures from "@/components/accessibility-features";
 import Navbar from "@/components/Navbar";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
 import Slider from "react-slick";
-import AiToHuman from "@/components/AiToHuman";
 
 const agencies = [
   {
@@ -124,6 +122,22 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="py-20 px-6 bg-amber-50">
+        <div className="container mx-auto max-w-6xl text-center">
+          <h2 className="text-4xl font-bold mb-6">Maxsus marshrutlar rejasi</h2>
+          <p className="text-xl max-w-3xl mx-auto mb-10">
+            Har qanday hududni o'rganish uchun mukammal yo'l xaritasini
+            yarating. AI yordamida vaqtingizga mos marshrutlar tuzing.
+          </p>
+          <Button
+            size="lg"
+            className="bg-amber-600 hover:bg-amber-700"
+            onClick={handleClick}
+          >
+            <Clock className="mr-2 h-5 w-5" /> Marshrutingizni yarating
+          </Button>
+        </div>
+      </section>
       <section className="py-20 px-6 bg-gray-100" id="agencies">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-4xl font-bold mb-12 text-center">
@@ -220,23 +234,6 @@ const Home = () => {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-20 px-6 bg-amber-50">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h2 className="text-4xl font-bold mb-6">Maxsus marshrutlar rejasi</h2>
-          <p className="text-xl max-w-3xl mx-auto mb-10">
-            Har qanday hududni o'rganish uchun mukammal yo'l xaritasini
-            yarating. AI yordamida vaqtingizga mos marshrutlar tuzing.
-          </p>
-          <Button
-            size="lg"
-            className="bg-amber-600 hover:bg-amber-700"
-            onClick={handleClick}
-          >
-            <Clock className="mr-2 h-5 w-5" /> Marshrutingizni yarating
-          </Button>
         </div>
       </section>
 
