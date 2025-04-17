@@ -7,13 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { DateRange } from "react-day-picker";
 
 export default function AIRoutePage() {
@@ -38,25 +31,28 @@ export default function AIRoutePage() {
   const generateRoute = async () => {
     setLoading(true);
     try {
-      const weatherRes = await fetch(`/api/weather?city=${location}`);
-      const weather = await weatherRes.json();
-
-      const response = await fetch("/api/ai-route", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          dateRange,
-          interests,
-          location,
-          budgetMin,
-          budgetMax,
-          accessibility,
-          weather,
-        }),
-      });
+      const response = await fetch(
+        "https://turizmplanner.pythonanywhere.com/api/travel-plan/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            location,
+            start_date: dateRange?.from?.toISOString().split("T")[0],
+            end_date: dateRange?.to?.toISOString().split("T")[0],
+            budget_from: Number(budgetMin),
+            budget_to: Number(budgetMax),
+            interests: interests.map((i) => i.toLowerCase()),
+            having_disability: accessibility === "nogiron",
+          }),
+        }
+      );
 
       const data = await response.json();
-      setRoute(data.route);
+      console.log(data);
+      setRoute(data.ai_itinerary);
     } catch (error) {
       console.error("Marshrutni yaratishda xatolik:", error);
       setRoute("Xatolik yuz berdi. Qayta urinib ko‘ring.");
@@ -68,8 +64,20 @@ export default function AIRoutePage() {
   const handleLocationInput = async (val: string) => {
     setLocation(val);
 
-    // Qidiruv tavsiyalari (demo uchun oddiy filter)
-    const cities = ["Toshkent", "Samarqand", "Buxoro", "Xiva", "Farg‘ona"];
+    const cities = [
+      "Toshkent",
+      "Samarqand",
+      "Buxoro",
+      "Xiva",
+      "Farg‘ona",
+      "Namangan",
+      "Andijon",
+      "Navoiy",
+      "Xorazm",
+      "Qoraqalpog'ziston",
+      "Surxondaryo",
+      "Qashqadaryo",
+    ];
     const filtered = cities.filter((city) =>
       city.toLowerCase().includes(val.toLowerCase())
     );
@@ -83,8 +91,9 @@ export default function AIRoutePage() {
       </h1>
 
       <div className="space-y-4">
-        <Label>Manzilingiz</Label>
+        <Label>Qaysi viloyatga bormoqchisiz?</Label>
         <Input
+          className="opacity-50"
           placeholder="Masalan: Toshkent"
           value={location}
           onChange={(e) => handleLocationInput(e.target.value)}
@@ -125,10 +134,17 @@ export default function AIRoutePage() {
           />
         </div>
 
-        <Label>Qiziqishlaringiz</Label>
-        <div className="flex flex-wrap gap-4">
-          {["Tarixiy joylar", "Tabiat", "Ovqat", "Madaniyat", "VR tajriba"].map(
-            (interest) => (
+        <div className="mb-5">
+          {" "}
+          <Label>Qiziqishlaringiz</Label>
+          <div className="flex flex-wrap gap-4">
+            {[
+              "Tarixiy joylar",
+              "Tabiat",
+              "Ovqat",
+              "Madaniyat",
+              "VR tajriba",
+            ].map((interest) => (
               <div
                 key={interest}
                 className="flex items-center gap-2 cursor-pointer"
@@ -137,27 +153,20 @@ export default function AIRoutePage() {
                 <Checkbox checked={interests.includes(interest)} />
                 <span>{interest}</span>
               </div>
-            )
-          )}
+            ))}
+          </div>
         </div>
 
-        <Label>Imkoniyatingiz holati</Label>
-        <Select onValueChange={(val) => setAccessibility(val)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Tanlang" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hech qanday cheklov yo‘q">
-              Hech qanday cheklov yo‘q
-            </SelectItem>
-            <SelectItem value="nogironlar uchun mos">
-              Nogironlar uchun mos
-            </SelectItem>
-            <SelectItem value="otasiz/onasisiz bolalar">
-              Otasiz/onasisiz bolalar
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <Label htmlFor="accessibility">Nogironligingiz bormi?</Label>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="accessibility"
+            onCheckedChange={(val) =>
+              setAccessibility(val ? "nogiron" : "sog'lom")
+            }
+          />
+          <span>Ha</span>
+        </div>
 
         <Button
           onClick={generateRoute}

@@ -1,50 +1,39 @@
 // app/api/ai-route/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { OpenAI } from "openai";
+import { NextResponse } from "next/server";
+import OpenAI from "openai"; // OpenAI SDK yoki boshqa API
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, // OpenAI API kalitingizni .env faylidan oling
 });
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { date, interests, weather, location } = body;
+export async function POST(req: Request) {
+  const data = await req.json(); // Frontenddan yuborilgan malumotni qabul qilish
+  console.log(data);
 
-  if (!date || !interests || !weather) {
-    return NextResponse.json(
-      { error: "Barcha ma'lumotlar to‘liq emas" },
-      { status: 400 }
-    );
-  }
+  const { location, date, duration, interests, budget } = data;
 
+  // AI ga yuboriladigan promptni yaratish
   const prompt = `
-Siz AI sayohat agentisiz. Foydalanuvchi quyidagi shartlarda sayohat qilmoqchi:
-- Sanasi: ${date}
-- Qiziqishlari: ${interests.join(", ")}
-- Ob-havo: ${weather.weather[0].description}, harorat ${weather.main.temp}°C
-- Joylashuv: ${location}
+Sayohat rejalashtirish:
+Manzil: ${location}
+Sana: ${date}
+Davomiylik: ${duration} kun
+Qiziqishlar: ${interests}
+Byudjet: ${budget}
 
-Ushbu ma'lumotlarga asoslanib, 3-4 ta bosqichli marshrut tuzing. Har bosqichda:
-- Nima qilish kerak
-- Qayerga borish kerak
-- Qaysi transportdan foydalanish mumkin
--
-
-Marshrut O‘zbek tilida yozilsin.
+Yuqoridagi ma'lumotlarga asoslanib tavsiyalarni tayyorlang:
 `;
-  console.log(prompt);
+
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
+    const aiResponse = await openai.chat.completions.create({
+      model: "gpt-4", // Yoki boshqa modelni tanlang
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
     });
 
-    const result = response.choices[0].message.content;
-    return NextResponse.json({ route: result });
+    return NextResponse.json({ plan: aiResponse.choices[0].message.content });
   } catch (error) {
     return NextResponse.json(
-      { error: "AI xizmatida xatolik" },
+      { error: "AI bilan bogʻlanishda xatolik yuz berdi" },
       { status: 500 }
     );
   }

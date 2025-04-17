@@ -22,6 +22,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import Slider from "react-slick";
+import AiToHuman from "@/components/AiToHuman";
+
 const agencies = [
   {
     name: "Anex tour",
@@ -59,7 +61,8 @@ const agencies = [
     description: "Oila uchun qulay xizmatlar va qulay narxlar.",
   },
 ];
-export default function Home() {
+
+const Home = () => {
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -79,11 +82,13 @@ export default function Home() {
       },
     ],
   };
+
   const router = useRouter();
 
   const handleClick = () => {
     router.push("/ai-route");
   };
+
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-800">
       <Navbar />
@@ -292,31 +297,28 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               {
-                title: "Mahalliy taomlar",
-                desc: "Haqiqiy mahalliy taomlarni kashf eting",
-                body: "AI tavsiyalari asosida eng yaxshi restoranlarni toping va mahalliy taomlarning ajoyib lazzatidan bahramand bo‘ling.",
-                color: "text-purple-500",
+                icon: Utensils,
+                title: "Restoranlar",
+                description: "Eng yaxshi restoranlar",
+                btnText: "Tavsiyalarni ko'rish",
               },
               {
-                title: "O'z ovqatingizni olib boring",
-                desc: "Ovqat olib boradigan sayohatchilar uchun maslahatlar",
-                body: "O'z ovqatingizni qanday qadoqlash va saqlash haqida maslahatlar. Mahalliy qoidalarni biling.",
-                color: "text-teal-500",
+                icon: Utensils,
+                title: "Kafelar",
+                description: "Mahalliy kafelarni kashf eting",
+                btnText: "Ko'rish",
               },
-            ].map(({ title, desc, body, color }) => (
-              <Card key={title} className="hover:shadow-md transition-shadow">
-                <CardHeader className="flex items-center gap-4">
-                  <Utensils className={`h-8 w-8 ${color}`} />
+            ].map(({ icon: Icon, title, description, btnText }) => (
+              <Card key={title}>
+                <CardHeader>
+                  <Icon className="h-8 w-8 text-primary" />
                   <div>
                     <CardTitle>{title}</CardTitle>
-                    <CardDescription>{desc}</CardDescription>
+                    <CardDescription>{description}</CardDescription>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p>{body}</p>
-                </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Batafsil o'rganish</Button>
+                  <Button className="w-full">{btnText}</Button>
                 </CardFooter>
               </Card>
             ))}
@@ -324,60 +326,16 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-white py-16 px-6">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">Sayohat yo'riqnomasi</h3>
-            <p className="text-gray-300">
-              AI-quvvatlangan sayohat hamrohingiz.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4">Tezkor havolalar</h3>
-            <ul className="space-y-2">
-              {["Manzillar", "VR sayohat", "Imkoniyatlar", "Transport"].map(
-                (item) => (
-                  <li key={item}>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      {item}
-                    </Link>
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4">Resurslar</h3>
-            <ul className="space-y-2">
-              {[
-                "Sayohat yo'riqnomalari",
-                "Ob-havo yangiliklari",
-                "Umra paketlari",
-                "Ovqatlanish yo'riqnomasi",
-              ].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-gray-300 hover:text-white">
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4">Aloqa</h3>
-            <ul className="space-y-2 text-gray-300">
-              <li>Email: info@travelguide.com</li>
-              <li>Telefon: +998 90 123 4567</li>
-            </ul>
-          </div>
+      <section className="py-20 px-6 bg-gray-100">
+        <div className="container mx-auto max-w-6xl text-center">
+          <h2 className="text-4xl font-bold mb-12">
+            Sayohat uchun kerakli imkoniyatlar
+          </h2>
+          <AccessibilityFeatures />
         </div>
-        <div className="text-center text-gray-400 mt-12 border-t border-gray-800 pt-6">
-          <p>
-            © {new Date().getFullYear()} Sayohat yo'riqnomasi. Barcha huquqlar
-            himoyalangan.
-          </p>
-        </div>
-      </footer>
+      </section>
     </div>
   );
-}
+};
+
+export default Home;
